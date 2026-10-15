@@ -21,14 +21,12 @@ jobs:
           ruby-version: '3.1'
 
       - name: Compile
-        shell: msys2 {0}
         run: |
           ruby ./extconf.rb x86_64
           make
           cp ./lib/x86_64/discord_game_sdk.dll ./discord_game_sdk.dll
 
       - name: Test
-        shell: msys2 {0}
         run: ruby ./test.rb
 
       - name: Artifact
@@ -65,8 +63,6 @@ jobs:
           lipo -create -output discord.bundle discord.x86_64 discord.arm64
           lipo -create -output discord_game_sdk.dylib ./lib/x86_64/libdiscord_game_sdk.dylib ./lib/arm64/libdiscord_game_sdk.dylib
           ruby ./test.rb
-          LIBRUBY=`otool -L discord.bundle | grep libruby | awk '{print $1}'`
-          install_name_tool -change $LIBRUBY @rpath/`echo $LIBRUBY | sed 's~.*/~~'` discord.bundle
 
       - name: Artifact
         uses: actions/upload-artifact@v7
